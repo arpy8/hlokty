@@ -3,11 +3,12 @@ build/
 dist/
 ipg.egg-info/
 ipg/
+.venv/
 
 pypi
-.venv
 MANIFEST.in
 setup.py
 README.md
 
 api/vercel.json
+api/__pycache__
