@@ -1,0 +1,13 @@
+executable/
+build/
+dist/
+ipg.egg-info/
+ipg/
+
+pypi
+.venv
+MANIFEST.in
+setup.py
+README.md
+
+api/vercel.json
