@@ -1,8 +1,8 @@
 import os, requests
 from flask import Flask, request, jsonify
 
-TOKEN = os.getenv("IPG_BOT_TOKEN")
-CHANNEL_ID = os.getenv("IPG_CHANNEL_ID")
+TOKEN = os.environ.get("IPG_BOT_TOKEN")
+CHANNEL_ID = os.environ.get("IPG_CHANNEL_ID")
 
 url = f'https://discord.com/api/v10/channels/{CHANNEL_ID}/messages'
 headers = {
