@@ -4,6 +4,7 @@ dist/
 ipg.egg-info/
 ipg/
 .venv/
+api/node_modules/
 
 pypi
 MANIFEST.in
