@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException, Request
 import os
 import requests
+import uvicorn
+from fastapi import FastAPI, Request
 
 TOKEN = os.environ.get("IPG_BOT_TOKEN")
 CHANNEL_ID = os.environ.get("IPG_CHANNEL_ID")

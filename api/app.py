@@ -24,7 +24,11 @@ def send_message(message):
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST'])
+@app.get("/", methods=['GET'])
+async def root():
+    return {"message": "Hello World"}
+
+@app.route('/data', methods=['POST'])
 def send_data():
     if request.method == 'POST':
         data = request.json
@@ -32,8 +36,5 @@ def send_data():
         
         return jsonify("sent successfully")
 
-def main(environ=None, start_response=None):
-    app.run()
-
 if __name__ == "__main__":
-    main()
+    app.run(debug=True, port=5000)
