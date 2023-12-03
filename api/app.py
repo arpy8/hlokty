@@ -32,5 +32,8 @@ def send_data():
         
         return jsonify("sent successfully")
 
-def main():
+def main(environ=None, start_response=None):
     app.run()
+
+if __name__ == "__main__":
+    main()
