@@ -1,15 +1,3 @@
-executable/
-build/
-dist/
-ipg.egg-info/
-ipg/
-.venv/
-api/node_modules/
-
 pypi
-MANIFEST.in
-setup.py
-README.md
-
-api/vercel.json
-api/__pycache__
+.venv/
+executable/__pycache__
