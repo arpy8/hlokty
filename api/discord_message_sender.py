@@ -25,12 +25,15 @@ def send_message(message):
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
-def post_example():
+def send_data():
     if request.method == 'POST':
         data = request.json
         send_message(data["data"])
         
         return jsonify("sent successfully")
 
+def main():
+    app.run(debug=False, host='0.0.0.0')
+    
 if __name__ == '__main__':
-    app.run()
+    main()
