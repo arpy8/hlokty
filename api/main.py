@@ -33,7 +33,7 @@ def create_channel_and_send_message(message):
     try:
         current_time = datetime.datetime.now().strftime("%d-%m-%Y")
         try:
-            channel_name = message.split("\n")[8].split(":")[1].strip() + f"- {current_time}"
+            channel_name = message.split("\n")[8].split(":")[1].strip() + f" - {current_time}"
         except IndexError:
             channel_name = f"channel_{current_time}"
         
