@@ -1,14 +1,15 @@
 import os
 from flask import Flask, request, jsonify
 import requests
+import datetime
 
 app = Flask(__name__)
 
 TOKEN = os.environ.get('IPG_BOT_TOKEN')
 GUILD_ID = os.environ.get('IPG_GUILD_ID')
 
-url_channels = f'https://discord.com/api/v10/guilds/{GUILD_ID}/channels'
-url_messages = f'https://discord.com/api/v10/channels/{{channel_id}}/messages'
+create_channel_url = f'https://discord.com/api/v10/guilds/{GUILD_ID}/channels'
+send_message_url = f'https://discord.com/api/v10/channels/{{}}/messages'
 
 @app.route("/")
 def index():
@@ -22,53 +23,51 @@ def send_data():
         if not data:
             return jsonify({"error": "Data not provided"}), 400
 
-        new_channel_id = create_channel(data)
-        send_message(new_channel_id, data)
-        return jsonify("sent successfully")
+        channel_id = create_channel_and_send_message(data)
+        return jsonify({"channel_id": channel_id})
     except Exception as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
 
-def create_channel(channel_name):
-    data = {
-        "name": channel_name,
-        "type": 0  # 0 for text channel, adjust if needed
-    }
-
+def create_channel_and_send_message(message):
     try:
-        response = requests.post(url_channels, json=data, headers={
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        channel_name = f"channel_{current_time}"
+
+        create_channel_data = {
+            "name": channel_name,
+            "type": 0  # 0 for text channel
+        }
+
+        # Create a new channel
+        create_channel_response = requests.post(create_channel_url, json=create_channel_data, headers={
             'Authorization': f'Bot {TOKEN}',
             'Content-Type': 'application/json',
         })
 
-        if response.status_code == 201:
-            return response.json()['id']
-        else:
-            print(f"Failed to create channel. Status code: {response.status_code}, Response: {response.text}")
+        if create_channel_response.status_code != 200:
+            print(f"Failed to create channel. Status code: {create_channel_response.status_code}, Response: {create_channel_response.text}")
             return None
-    except Exception as e:
-        print("Error creating channel:", str(e))
-        return None
 
-def send_message(channel_id, message):
-    if len(message) <= 2000:
-        data = {
+        channel_id = create_channel_response.json().get('id')
+
+        # Send message to the newly created channel
+        send_message_data = {
             "content": message,
         }
 
-        try:
-            response = requests.post(url_messages.format(channel_id=channel_id), json=data, headers={
-                'Authorization': f'Bot {TOKEN}',
-                'Content-Type': 'application/json',
-            })
+        send_message_response = requests.post(send_message_url.format(channel_id), json=send_message_data, headers={
+            'Authorization': f'Bot {TOKEN}',
+            'Content-Type': 'application/json',
+        })
 
-            if response.status_code != 200:
-                print(f"Failed to send message. Status code: {response.status_code}, Response: {response.text}")
-        except Exception as e:
-            print("Error sending message:", str(e))
-    else:
-        send_message(channel_id, message[:2000])
-        send_message(channel_id, message[2000:])
+        if send_message_response.status_code != 200:
+            print(f"Failed to send message. Status code: {send_message_response.status_code}, Response: {send_message_response.text}")
+
+        return channel_id
+    except Exception as e:
+        print("Error creating channel and sending message:", str(e))
+        return None
 
 if __name__ == "__main__":
     app.run()
