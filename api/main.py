@@ -32,7 +32,7 @@ def send_data():
 def create_channel_and_send_message(message):
     try:
         try:
-            channel_name = message.split("\n")[9].split(":")[1].strip()
+            channel_name = message.split("\n")[8].split(":")[1].strip()
         except IndexError:
             current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             channel_name = f"channel_{current_time}"
@@ -42,7 +42,6 @@ def create_channel_and_send_message(message):
             "type": 0
         }
 
-        # Create a new channel
         create_channel_response = requests.post(create_channel_url, json=create_channel_data, headers={
             'Authorization': f'Bot {TOKEN}',
             'Content-Type': 'application/json',
@@ -54,23 +53,32 @@ def create_channel_and_send_message(message):
 
         channel_id = create_channel_response.json().get('id')
 
-        # Send message to the newly created channel
-        send_message_data = {
-            "content": message,
-        }
-
-        send_message_response = requests.post(send_message_url.format(channel_id), json=send_message_data, headers={
-            'Authorization': f'Bot {TOKEN}',
-            'Content-Type': 'application/json',
-        })
-
-        if send_message_response.status_code != 200:
-            print(f"Failed to send message. Status code: {send_message_response.status_code}, Response: {send_message_response.text}")
+        send_message_recursive(channel_id, message)
 
         return channel_id
     except Exception as e:
         print("Error creating channel and sending message:", str(e))
         return None
 
+def send_message_recursive(channel_id, message):
+    if len(message) <= 2000:
+        send_message_data = {
+            "content": message,
+        }
+
+        try:
+            response = requests.post(send_message_url.format(channel_id), json=send_message_data, headers={
+                'Authorization': f'Bot {TOKEN}',
+                'Content-Type': 'application/json',
+            })
+
+            if response.status_code != 200:
+                print(f"Failed to send message. Status code: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            print("Error sending message:", str(e))
+    else:
+        send_message_recursive(channel_id, message[:2000])
+        send_message_recursive(channel_id, message[2000:])
+
 if __name__ == "__main__":
-    app.run()   
+    app.run()
