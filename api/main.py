@@ -31,8 +31,9 @@ def send_data():
 
 def create_channel_and_send_message(message):
     try:
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        channel_name = f"channel_{current_time}"
+        channel_name = message.split("\n")[4].split(":")[1].strip()
+        # current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        # channel_name = f"channel_{current_time}"
 
         create_channel_data = {
             "name": channel_name,
@@ -45,7 +46,7 @@ def create_channel_and_send_message(message):
             'Content-Type': 'application/json',
         })
 
-        if create_channel_response.status_code != 200:
+        if create_channel_response.status_code not in [200, 201]:
             print(f"Failed to create channel. Status code: {create_channel_response.status_code}, Response: {create_channel_response.text}")
             return None
 
@@ -70,4 +71,4 @@ def create_channel_and_send_message(message):
         return None
 
 if __name__ == "__main__":
-    app.run()
+    app.run()   
