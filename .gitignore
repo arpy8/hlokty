@@ -2,3 +2,7 @@ pypi
 .venv/
 executable/__pycache__
 test.ipynb
+
+build/
+dist/
+*.egg-info/
