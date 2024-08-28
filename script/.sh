@@ -3,14 +3,12 @@
 ensure_in_path() {
     if [[ ":$PATH:" != *":$1:"* ]]; then
         export PATH="$1:$PATH"
-    else
     fi
 }
 
 if ! command -v python3 &> /dev/null
 then
     brew install python
-else
 fi
 
 if [ -d "$HOME/.local/bin" ] ; then
